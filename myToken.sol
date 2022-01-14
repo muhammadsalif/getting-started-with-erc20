@@ -32,4 +32,85 @@ contract MyToken is IERC20 {
         // fire an event on transfer of tokens
         emit Transfer(address(this), owner, _totalSupply);
     }
+
+    // returning totalsupply remaining in contract
+    function totalSupply() public view override returns (uint256) {
+        return _totalSupply;
+    }
+
+    // returning balanceOf that specific address
+    function balanceOf(address account) public view override returns (uint256) {
+        return _balances[account];
+    }
+
+    // transfering amount from one account to another
+    function transfer(address recipient, uint256 amount)
+        public
+        virtual
+        override
+        returns (bool)
+    {
+        address sender = msg.sender; // the person who is calling this function
+        require(sender != address(0), "Sender address is required"); // null address | burn address
+        require(recipient != address(0), "Receipent address is required");
+        require(_balances[sender] < amount, "Not suffecient funds");
+
+        _balances[recipient] = _balances[recipient] + amount;
+        _balances[sender] = _balances[sender] - amount;
+
+        emit Transfer(sender, recipient, amount);
+        return true;
+    }
+
+    // checking remaining amount of tokens that are approved to specific address
+    function allowance(address _owner, address spender)
+        public
+        view
+        override
+        returns (uint256)
+    {
+        return _allowances[_owner][spender];
+    }
+
+    function approve(address spender, uint256 amount)
+        public
+        override
+        returns (bool)
+    {
+        address sender = msg.sender; // the person who is calling this function
+        require(sender != address(0), "Sender address is required"); // null address | burn address
+        require(_balances[sender] < amount, "Not suffecient funds");
+
+        _allowances[sender][spender] = amount;
+        _balances[sender] = _balances[sender] - amount;
+
+        emit Approval(sender, spender, amount);
+
+        return true;
+    }
+
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) public override returns (bool) {
+        address spender = msg.sender; // the person who is calling this function
+        require(
+            sender != address(0),
+            "Sender address should not be null address"
+        );
+        require(
+            recipient != address(0),
+            "Recipient address should not be null address"
+        );
+        require(_allowances[sender][spender] < amount, "Not allowed");
+
+        //deducting allowance
+        _allowances[sender][spender] = _allowances[sender][spender] - amount;
+        _balances[sender] = _balances[sender] - amount;
+        _balances[recipient] = _balances[recipient] + amount;
+        emit Transfer(sender, recipient, amount);
+
+        return true;
+    }
 }

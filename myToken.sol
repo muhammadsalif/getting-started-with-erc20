@@ -82,7 +82,6 @@ contract MyToken is IERC20 {
         require(_balances[sender] < amount, "Not suffecient funds");
 
         _allowances[sender][spender] = amount;
-        _balances[sender] = _balances[sender] - amount;
 
         emit Approval(sender, spender, amount);
 
@@ -105,10 +104,13 @@ contract MyToken is IERC20 {
         );
         require(_allowances[sender][spender] < amount, "Not allowed");
 
-        //deducting allowance
+        // deducting allowance
         _allowances[sender][spender] = _allowances[sender][spender] - amount;
+        // deducting sender amount from balance
         _balances[sender] = _balances[sender] - amount;
+        // adding amount to recipient address
         _balances[recipient] = _balances[recipient] + amount;
+        // firing event for dapp
         emit Transfer(sender, recipient, amount);
 
         return true;

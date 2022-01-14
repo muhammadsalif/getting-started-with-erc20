@@ -53,7 +53,7 @@ contract MyToken is IERC20 {
         address sender = msg.sender; // the person who is calling this function
         require(sender != address(0), "Sender address is required"); // null address | burn address
         require(recipient != address(0), "Receipent address is required");
-        require(_balances[sender] < amount, "Not suffecient funds");
+        require(_balances[sender] > amount, "Not suffecient funds");
 
         _balances[recipient] = _balances[recipient] + amount;
         _balances[sender] = _balances[sender] - amount;
@@ -79,7 +79,7 @@ contract MyToken is IERC20 {
     {
         address sender = msg.sender; // the person who is calling this function
         require(sender != address(0), "Sender address is required"); // null address | burn address
-        require(_balances[sender] < amount, "Not suffecient funds");
+        require(_balances[sender] > amount, "Not suffecient funds");
 
         _allowances[sender][spender] = amount;
 
@@ -102,7 +102,7 @@ contract MyToken is IERC20 {
             recipient != address(0),
             "Recipient address should not be null address"
         );
-        require(_allowances[sender][spender] < amount, "Not allowed");
+        require(_allowances[sender][spender] > amount, "Not allowed");
 
         // deducting allowance
         _allowances[sender][spender] = _allowances[sender][spender] - amount;
